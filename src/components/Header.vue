@@ -19,7 +19,7 @@ defineProps({
     <ul class="flex items-center gap-10">
       <li
         class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer"
-        @click="emit('openDrawer')"
+        @click="() => emit('openDrawer')"
       >
         <img src="/cart.svg" alt="cart image" />
         <b>{{ totalPrice }} руб.</b>

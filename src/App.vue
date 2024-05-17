@@ -9,7 +9,10 @@ import Drawer from './components/Drawer.vue'
 const items = ref([])
 const cart = ref([])
 const drawerOpen = ref(false)
+const isCreatingOrder = ref(false)
+
 const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
+const cartButtonDisabled = computed(() => !totalPrice.value || isCreatingOrder.value)
 
 const filters = reactive({
   sortBy: 'title',
@@ -18,12 +21,18 @@ const filters = reactive({
 
 const createOrder = async () => {
   try {
-    await axios.post('https://e0df4bb822e07583.mokky.dev/orders', {
-      items: cart.value
+    isCreatingOrder.value = true
+    const { data } = await axios.post('https://e0df4bb822e07583.mokky.dev/orders', {
+      items: cart.value,
+      totalPrice: totalPrice.value
     })
+
     cart.value = []
+    return data
   } catch (error) {
     console.error(error)
+  } finally {
+    isCreatingOrder.value = false
   }
 }
 
@@ -116,11 +125,33 @@ const fetchItems = async () => {
 }
 
 onMounted(async () => {
+  cart.value = JSON.parse(localStorage.getItem('cart') || '[]')
+
   await fetchItems()
   await fetchFavorites()
+
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: cart.value.some((cartItem) => cartItem.id === item.id)
+  }))
 })
 
 watch(filters, fetchItems)
+
+watch(cart, () => {
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: false
+  }))
+})
+
+watch(
+  cart,
+  () => {
+    localStorage.setItem('cart', JSON.stringify(cart.value))
+  },
+  { deep: true }
+)
 
 provide('cart', { cart, closeDrawer, addToCart })
 </script>
@@ -155,7 +186,12 @@ provide('cart', { cart, closeDrawer, addToCart })
     </div>
   </div>
 
-  <Drawer v-if="drawerOpen" :total-price="totalPrice" />
+  <Drawer
+    v-if="drawerOpen"
+    :total-price="totalPrice"
+    :button-disabled="cartButtonDisabled"
+    @create-order="createOrder"
+  />
 </template>
 
 <style scoped></style>

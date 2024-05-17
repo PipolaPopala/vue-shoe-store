@@ -1,35 +1,23 @@
-# .
+# Sneakers shoe store 👟
 
-This template should help get you started developing with Vue 3 in Vite.
+**⚙️ Stack:**
 
-## Recommended IDE Setup
+- Vue 3 (Composition API)
+- Vue Router
+- TailwindCSS
+- Axios
+- @formkit/auto-animate
+- ESLint
+- Prettier
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Download dependencies
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+```shell
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Start the app
 
-```sh
+```shell
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
