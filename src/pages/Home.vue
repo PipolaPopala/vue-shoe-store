@@ -1,7 +1,9 @@
 <script setup>
 import { inject, onMounted, reactive, ref, watch } from 'vue'
-import CardList from '../components/CardList.vue'
 import axios from 'axios'
+import debounce from 'lodash.debounce'
+
+import CardList from '../components/CardList.vue'
 
 const items = ref([])
 
@@ -16,20 +18,19 @@ const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
 }
 
-const onChangeSearchInput = (event) => {
+const onChangeSearchInput = debounce((event) => {
   filters.searchQuery = event.target.value
-}
+}, 500)
 
 const addToFavorite = async (item) => {
   try {
     if (!item.isFavorite) {
       const obj = {
-        parentId: item.id
+        item_id: item.id
       }
       const { data } = await axios.post('https://e0df4bb822e07583.mokky.dev/favorites', obj)
       item.isFavorite = true
       item.favoriteId = data.id
-      console.log(item)
     } else {
       await axios.delete(`https://e0df4bb822e07583.mokky.dev/favorites/${item.favoriteId}`)
       item.isFavorite = false
@@ -44,7 +45,7 @@ const fetchFavorites = async () => {
   try {
     const { data: favorites } = await axios.get('https://e0df4bb822e07583.mokky.dev/favorites')
     items.value = items.value.map((item) => {
-      const favorite = favorites.some((favorite) => favorite.parentId === item.id)
+      const favorite = favorites.find((favorite) => favorite.item_id === item.id)
       if (!favorite) {
         return item
       }
@@ -106,7 +107,7 @@ watch(filters, fetchItems)
 
 <template>
   <div class="flex justify-between items-center mb-8">
-    <h2 class="text-3xl font-bold">Все кроссовки</h2>
+    <h1 class="text-3xl font-bold">Все кросcовки</h1>
     <div class="flex gap-4">
       <select @change="onChangeSelect" class="py-2 px-4 border rounded outline-none">
         <option value="name">По названию</option>

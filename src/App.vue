@@ -8,27 +8,8 @@ import Drawer from './components/Drawer.vue'
 /* Корзина (start)*/
 const cart = ref([])
 const drawerOpen = ref(false)
-const isCreatingOrder = ref(false)
 
 const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
-const cartButtonDisabled = computed(() => !totalPrice.value || isCreatingOrder.value)
-
-const createOrder = async () => {
-  try {
-    isCreatingOrder.value = true
-    const { data } = await axios.post('https://e0df4bb822e07583.mokky.dev/orders', {
-      items: cart.value,
-      totalPrice: totalPrice.value
-    })
-
-    cart.value = []
-    return data
-  } catch (error) {
-    console.error(error)
-  } finally {
-    isCreatingOrder.value = false
-  }
-}
 
 const addToCart = (item) => {
   if (!item.isAdded) {
@@ -69,12 +50,7 @@ provide('cart', { cart, closeDrawer, addToCart })
     </div>
   </div>
 
-  <Drawer
-    v-if="drawerOpen"
-    :total-price="totalPrice"
-    :button-disabled="cartButtonDisabled"
-    @create-order="createOrder"
-  />
+  <Drawer v-if="drawerOpen" :total-price="totalPrice" />
 </template>
 
 <style scoped></style>

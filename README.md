@@ -9,6 +9,7 @@
 - @formkit/auto-animate
 - ESLint
 - Prettier
+- mokky.dev - free REST API serves
 
 ### Download dependencies
 
